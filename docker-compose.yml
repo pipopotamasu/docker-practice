@@ -1,17 +1,26 @@
-version: "3"
+version: "3.5"
 services:
-  master:
-    container_name: master
-    image: jenkins:latest
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     ports:
-      - 8080:8080
+      - 8080:80
     volumes:
-      - ./jenkins_home:/var/jenkins_home
+      - ./logs/nginx/:/var/log/nginx/
+      - ./nginx.conf:/etc/nginx/nginx.conf
     links:
-      - slave01
+      - nuxt
   
-  slave01:
-    container_name: slave01
-    image: jenkinsci/ssh-slave
+  nuxt:
+    container_name: nuxt
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_from:
+        - node:8.12
     environment:
-      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNXxSpo2/5udZQMUe5SSA0TKzkumtQ5D9W2rklk9sjAXy2kRcZ59JxeR8dneA4Q2+xFr/y9Orv2pYTQExpXDNeqeL0hxGEQ3BSqc4guv3cjY3uWGXlKbAESClXRa9zFpinti6buf8j9AHeMkYOp7/We7fJLE8y+ufmEaWVg+T8/kQepU1WFp2qUnWynzagU93+RcFF2bHtBk/prMXgl0mIMqMFfrsl5FSam+wu2sVQraCRHPuQqZihkaNm70+fltCgirnYLfu0ziBAMTU0MPtnrocsWUK/pB8s5CUYyA2jGfUCL3sOjMwGrxXbSlh3+Hy+Umz5HA0ZSTGQTmM3jacF 
+      NODE_ENV: development
+    volumes:
+      - ./:/nuxt
+    ports:
+      - '3000:3000'
