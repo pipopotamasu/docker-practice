@@ -2,20 +2,27 @@ version: "3.5"
 services:
   nginx:
     container_name: nginx
-    image: nginx:latest
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+      cache_from:
+        - nginx:1.15
     depends_on:
       - nuxt 
     ports:
       - 8080:80
+    environment:
+      APP_SERVER: nuxt
     volumes:
       - ./logs/nginx/:/var/log/nginx/
-      - ./nginx:/etc/nginx/conf.d
+      # dockerfileのCMDで実行しているsedでnginxのhostを書き換えているため、マウントしない
+      # - ./nginx:/etc/nginx/conf.d
   
   nuxt:
     container_name: nuxt
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: nuxt.Dockerfile
       cache_from:
         - node:8.12
     environment:
