@@ -27,6 +27,7 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
+      - run: echo $CIRCLE_REPOSITORY_URL
 
       - save_cache:
           paths:
